@@ -24,6 +24,16 @@ MLlib是Spark里的机器学习库。它的目标是使实用的机器学习算�
 
 ### 1. [管道](ml-pipeline.md)
 
+#### 1.1 [DataFrame](ml-pipeline.md#dataframe)
+
+#### 1.2 [变换器](ml-pipeline.md#transformers)
+
+#### 1.3 [估计器](ml-pipeline.md#estimators)
+
+#### 1.4 [管道原理](ml-pipeline.md#pipeline)
+
+#### 1.5 [参数](ml-pipeline.md#parameters)
+
 ### 2. 特征提取、特征变换、特征选择
 
 #### 2.1 特征提取
@@ -84,37 +94,41 @@ MLlib是Spark里的机器学习库。它的目标是使实用的机器学习算�
 
     2.3.3 选择
 
-### 3 分类和回归
+### 3 [分类和回归](ml-classification-regression.md)
 
-#### 3.1 分类
+#### 3.1 [分类](ml-classification-regression.md#分类)
 
-    3.1.1 逻辑回归
+    3.1.1 [logistic回归](ml-classification-regression.md#logistic回归)
 
-    3.1.2决策树分类
+    3.1.2 [决策树分类器](ml-classification-regression.md#决策树分类器)
 
-    3.1.3 随机森林分裂
+    3.1.3 [随机森林分类器](ml-classification-regression.md#随机森林分类器)
 
-    3.1.4 梯度迭代树分类
+    3.1.4 [梯度提升树分类器](ml-classification-regression.md#梯度提升树分类器)
 
-    3.1.5 多层感知机
+    3.1.5 [多层感知机](ml-classification-regression.md#多层感知机)
 
-    3.1.6 一对多分类器
+    3.1.6 [线性支持向量机](ml-classification-regression.md#线性支持向量机)
 
-    3.1.7 朴素贝叶斯
+    3.1.7 [一对多分类器](ml-classification-regression.md#一对多分类器)
 
-#### 3.2 回归
+    3.1.8 [朴素贝叶斯](ml-classification-regression.md#naive-bayes)
 
-    3.2.1 广义线性模型
+#### 3.2 [回归](ml-classification-regression.md#regression)
 
-    3.2.2 决策树回归
+    3.2.1 [线性回归](ml-classification-regression.md#linear-regression)
 
-    3.2.3 随机森林回归
+    3.2.2 [广义线性模型](ml-classification-regression.md#generalized-linear-regression)
 
-    3.2.4 梯度迭代树回归
+    3.2.3 [回归树](ml-classification-regression.md#decision-tree-regression)
 
-    3.2.5 生存回归
+    3.2.4 [随机森林回归](ml-classification-regression.md#random-forest-regression)
 
-    3.2.6 保序回归
+    3.2.4 [梯度提升树回归](ml-classification-regression.md#gradient-boosted-tree-regression)
+
+    3.2.5 [生存回归](ml-classification-regression.md#survival-regression)
+
+    3.2.6 [保序回归](ml-classification-regression.md#isotonic-regression)
 
 ### 4 聚类
 
