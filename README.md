@@ -94,63 +94,63 @@ MLlib是Spark里的机器学习库。它的目标是使实用的机器学习算�
 
     2.3.3 选择
 
-### 3 [分类和回归](ml-classification-regression.md)
+### 3 [分类和回归](ml-classification-regression.ipynb)
 
-#### 3.1 [分类](ml-classification-regression.md#分类)
+#### 3.1 [分类](ml-classification-regression.ipynb#分类)
 
-    3.1.1 [logistic回归](ml-classification-regression.md#logistic回归)
+    3.1.1 [logistic回归](ml-classification-regression.ipynb#logistic回归)
 
-    3.1.2 [决策树分类器](ml-classification-regression.md#决策树分类器)
+    3.1.2 [决策树分类器](ml-classification-regression.ipynb#决策树分类器)
 
-    3.1.3 [随机森林分类器](ml-classification-regression.md#随机森林分类器)
+    3.1.3 [随机森林分类器](ml-classification-regression.ipynb#随机森林分类器)
 
-    3.1.4 [梯度提升树分类器](ml-classification-regression.md#梯度提升树分类器)
+    3.1.4 [梯度提升树分类器](ml-classification-regression.ipynb#梯度提升树分类器)
 
-    3.1.5 [多层感知机](ml-classification-regression.md#多层感知机)
+    3.1.5 [多层感知机](ml-classification-regression.ipynb#多层感知机)
 
-    3.1.6 [线性支持向量机](ml-classification-regression.md#线性支持向量机)
+    3.1.6 [线性支持向量机](ml-classification-regression.ipynb#线性支持向量机)
 
-    3.1.7 [一对多分类器](ml-classification-regression.md#一对多分类器)
+    3.1.7 [一对多分类器](ml-classification-regression.ipynb#一对多分类器)
 
-    3.1.8 [朴素贝叶斯](ml-classification-regression.md#naive-bayes)
+    3.1.8 [朴素贝叶斯](ml-classification-regression.ipynb#naive-bayes)
 
-#### 3.2 [回归](ml-classification-regression.md#回归)
+#### 3.2 [回归](ml-classification-regression.ipynb#回归)
 
-    3.2.1 [线性回归](ml-classification-regression.md#线性回归)
+    3.2.1 [线性回归](ml-classification-regression.ipynb#线性回归)
 
-    3.2.2 [广义线性模型](ml-classification-regression.md#广义线性模型)
+    3.2.2 [广义线性模型](ml-classification-regression.ipynb#广义线性模型)
 
-    3.2.3 [回归树](ml-classification-regression.md#回归树)
+    3.2.3 [回归树](ml-classification-regression.ipynb#回归树)
 
-    3.2.4 [随机森林回归](ml-classification-regression.md#随机森林回归)
+    3.2.4 [随机森林回归](ml-classification-regression.ipynb#随机森林回归)
 
-    3.2.4 [梯度提升树回归](ml-classification-regression.md#梯度提升树回归)
+    3.2.4 [梯度提升树回归](ml-classification-regression.ipynb#梯度提升树回归)
 
-    3.2.5 [生存回归](ml-classification-regression.md#生存回归)
+    3.2.5 [生存回归](ml-classification-regression.ipynb#生存回归)
 
-    3.2.6 [保序回归](ml-classification-regression.md#保序回归)
+    3.2.6 [保序回归](ml-classification-regression.ipynb#保序回归)
 
 #### 3.3 实现细节
 
-    3.3.1 [线性方法](ml-classification-regression.md#线性方法)
+    3.3.1 [线性方法](ml-classification-regression.ipynb#线性方法)
 
-    3.3.2 [决策树](ml-classification-regression.md#决策树)
+    3.3.2 [决策树](ml-classification-regression.ipynb#决策树)
 
-    3.3.3 [树集成](ml-classification-regression.md#树集成)
+    3.3.3 [树集成](ml-classification-regression.ipynb#树集成)
 
-    3.3.4 [随机森林](ml-classification-regression.md#随机森林)
+    3.3.4 [随机森林](ml-classification-regression.ipynb#随机森林)
 
-    3.3.5 [梯度提升树](ml-classification-regression.md#梯度提升树)
+    3.3.5 [梯度提升树](ml-classification-regression.ipynb#梯度提升树)
 
-### 4 聚类
+### 4 [聚类](ml-clustering.ipynb)
 
-#### 4.1 K均值聚类
+#### 4.1 [K均值聚类](ml-clustering.ipynb#K均值)
 
-#### 4.2 文档主题生成模型（LDA）
+#### 4.2 [隐Dirichlet分配（LDA）](ml-clustering.ipynb#隐Dirichlet分配（LDA）)
 
-#### 4.3 二分K均值
+#### 4.3 [二分K均值](ml-clustering.ipynb#二分K均值)
 
-#### 4.4 高斯混合模型（GMM）
+#### 4.4 [高斯混合模型（GMM）](ml-clustering.ipynb#高斯混合模型（GMM）)
 
 ### 5 协同过滤
 
