@@ -654,30 +654,30 @@ Spark的广义线性模型接口也提供摘要统计来诊断GLM模型的拟合
     <tr>
       <td>高斯</td>
       <td>连续型</td>
-      <td>Identity\*, Log, Inverse</td>
+      <td>Identity*, Log, Inverse</td>
     </tr>
     <tr>
       <td>二项</td>
       <td>二值型</td>
-      <td>Logit\*, Probit, CLogLog</td>
+      <td>Logit*, Probit, CLogLog</td>
     </tr>
     <tr>
       <td>泊松</td>
       <td>计数型</td>
-      <td>Log\*, Identity, Sqrt</td>
+      <td>Log*, Identity, Sqrt</td>
     </tr>
     <tr>
       <td>伽马</td>
       <td>连续型</td>
-      <td>Inverse\*, Idenity, Log</td>
+      <td>Inverse*, Idenity, Log</td>
     </tr>
     <tr>
-      <td>[Tweedie](https://en.wikipedia.org/wiki/Tweedie_distribution)</td>
+      <td><a href="https://en.wikipedia.org/wiki/Tweedie_distribution">Tweedie</a></td>
       <td>零膨胀连续型</td>
       <td>幂连接函数</td>
     </tr>
   </tbody>
-  <tfoot><tr><td colspan="4">\* 正则连接函数</td></tr></tfoot>
+  <tfoot><tr><td colspan="4">*正则连接函数</td></tr></tfoot>
 </table>
 
 **样例**
