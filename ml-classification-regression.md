@@ -4,6 +4,23 @@ title: 分类和回归
 displayTitle: 分类和回归
 ---
 
+$$
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\wv}{\mathbf{w}}
+\newcommand{\av}{\mathbf{\alpha}}
+\newcommand{\bv}{\mathbf{b}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\id}{\mathbf{I}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\0}{\mathbf{0}}
+\newcommand{\unit}{\mathbf{e}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\zero}{\mathbf{0}}
+$$
+
 本章节涵盖分类和回归算法，讨论了线性方法、树和集成方法等特定类型的算法。
 
 # 分类
@@ -96,17 +113,17 @@ lr.setThreshold(bestThreshold)
 
 结果类别的条件概率$k \in \{1, 2, ..., K\}$由softmax函数刻画。
 
-`\[
+$$
    P(Y=k|\mathbf{X}, \boldsymbol{\beta}_k, \beta_{0k}) =  \frac{e^{\boldsymbol{\beta}_k \cdot \mathbf{X}  + \beta_{0k}}}{\sum_{k'=0}^{K-1} e^{\boldsymbol{\beta}_{k'} \cdot \mathbf{X}  + \beta_{0k'}}}
-\]`
+$$
 
 我们使用一个多项分布响应模型最小化负对数似然，配合elastic-net惩罚以控制过拟合。
 
-`\[
+$$
 \min_{\beta, \beta_0} -\left[\sum_{i=1}^L w_i \cdot \log P(Y = y_i|\mathbf{x}_i)\right] + \lambda \left[\frac{1}{2}\left(1 - \alpha\right)||\boldsymbol{\beta}||_2^2 + \alpha ||\boldsymbol{\beta}||_1\right]
-\]`
+$$
 
-详细推导请参考[here](https://en.wikipedia.org/wiki/Multinomial_logistic_regression#As_a_log-linear_model)。
+详细推导请参考[这里](https://en.wikipedia.org/wiki/Multinomial_logistic_regression#As_a_log-linear_model)。
 
 **样例**
 
@@ -346,20 +363,26 @@ print(gbtModel)  # summary only
 ## 多层感知机
 
 多层感知机是基于前向人工神经网络[feedforward artificial neural network](https://en.wikipedia.org/wiki/Feedforward_neural_network)的一种分类器。
-多层感知机含有多层节点，每层节点与网络的下一层节点完全连接。输入层的节点代表输入数据，其他层的节点通过将输入数据与层上节点的权重`$\wv$`以及偏差`$\bv$`线性组合且应用一个激活函数，得到该层输出。
-`$K+1$`层多层感知机分类器可以写成如下矩阵形式：
-`\[
+多层感知机含有多层节点，每层节点与网络的下一层节点完全连接。输入层的节点代表输入数据，其他层的节点通过将输入数据与层上节点的权重$\wv$以及偏差$\bv$线性组合且应用一个激活函数，得到该层输出。
+$K+1$层多层感知机分类器可以写成如下矩阵形式：
+
+$$
 \mathrm{y}(\x) = \mathrm{f_K}(...\mathrm{f_2}(\wv_2^T\mathrm{f_1}(\wv_1^T \x+b_1)+b_2)...+b_K)
-\]`
+$$
+
 中间层节点使用sigmoid(logistic)函数：
-`\[
+
+$$
 \mathrm{f}(z_i) = \frac{1}{1 + e^{-z_i}}
-\]`
+$$
+
 输出层使用softmax函数:
-`\[
+
+$$
 \mathrm{f}(z_i) = \frac{e^{z_i}}{\sum_{k=1}^N e^{z_k}}
-\]`
-输出层中`$N$`代表类别数目。
+$$
+
+输出层中$N$代表类别数目。
 
 多层感知机通过反向传播来学习模型，其中我们使用logistic损失函数以及L-BFGS优化算法。
 
@@ -631,35 +654,35 @@ Spark的广义线性模型接口也提供摘要统计来诊断GLM模型的拟合
     <tr>
       <td>高斯</td>
       <td>连续型</td>
-      <td>Identity*, Log, Inverse</td>
+      <td>Identity\*, Log, Inverse</td>
     </tr>
     <tr>
       <td>二项</td>
       <td>二值型</td>
-      <td>Logit*, Probit, CLogLog</td>
+      <td>Logit\*, Probit, CLogLog</td>
     </tr>
     <tr>
       <td>泊松</td>
       <td>计数型</td>
-      <td>Log*, Identity, Sqrt</td>
+      <td>Log\*, Identity, Sqrt</td>
     </tr>
     <tr>
       <td>伽马</td>
       <td>连续型</td>
-      <td>Inverse*, Idenity, Log</td>
+      <td>Inverse\*, Idenity, Log</td>
     </tr>
     <tr>
       <td>[Tweedie](https://en.wikipedia.org/wiki/Tweedie_distribution)</td>
       <td>零膨胀连续型</td>
       <td>幂连接函数</td>
     </tr>
-    <tfoot><tr><td colspan="4">* 正则连接函数</td></tr></tfoot>
   </tbody>
+  <tfoot><tr><td colspan="4">\* 正则连接函数</td></tr></tfoot>
 </table>
 
 **样例**
 
-下面的例子展示了训练一个一个高斯响应与恒等连接函数的GLM并提取模型摘要统计。
+下面的例子展示了训练一个高斯分布响应与恒等连接函数的GLM并提取模型摘要统计。
 
 请参考[Python API文档](api/python/pyspark.ml.md#pyspark.ml.regression.GeneralizedLinearRegression)了解更多细节。
 
@@ -863,47 +886,47 @@ print(gbtModel)  # summary only
 
 给定协变量$x^{'}$的值，对于$i = 1, ..., n$，可能右截尾的随机生存时间$t_{i}$，AFT模型下的似然函数如下：
 
-`\[
+$$
 L(\beta,\sigma)=\prod_{i=1}^n[\frac{1}{\sigma}f_{0}(\frac{\log{t_{i}}-x^{'}\beta}{\sigma})]^{\delta_{i}}S_{0}(\frac{\log{t_{i}}-x^{'}\beta}{\sigma})^{1-\delta_{i}}
-\]`
+$$
 
 其中$\delta_{i}$是指示事件i发生了，即有无检测到。
 令$\epsilon_{i}=\frac{\log{t_{i}}-x^{'}\beta}{\sigma}$，则对数似然函数为以下形式：
 
-`\[
+$$
 \iota(\beta,\sigma)=\sum_{i=1}^{n}[-\delta_{i}\log\sigma+\delta_{i}\log{f_{0}}(\epsilon_{i})+(1-\delta_{i})\log{S_{0}(\epsilon_{i})}]
-\]`
+$$
 
 其中$S_{0}(\epsilon_{i})$是基线生存函数，$f_{0}(\epsilon_{i})$是对应的密度函数。
 
 最常用的AFT模型基于Weibull分布的生存时间。
 Weibull分布的生存时间对应于生存时间对数的极值分布，$S_{0}(\epsilon)$函数如下：
 
-`\[
+$$
 S_{0}(\epsilon_{i})=\exp(-e^{\epsilon_{i}})
-\]`
+$$
 
 $f_{0}(\epsilon_{i})$函数如下：
 
-`\[
+$$
 f_{0}(\epsilon_{i})=e^{\epsilon_{i}}\exp(-e^{\epsilon_{i}})
-\]`
+$$
 
 Weibull分布的生存时间AFT模型对数似然函数如下：
 
-`\[
+$$
 \iota(\beta,\sigma)= -\sum_{i=1}^n[\delta_{i}\log\sigma-\delta_{i}\epsilon_{i}+e^{\epsilon_{i}}]
-\]`
+$$
 
 由于最小化负对数似然函数等于最大化后验概率，所以我们要优化的损失函数为$-\iota(\beta,\sigma)$。
 分别对$\beta$以及$\log\sigma$求导：
 
-`\[
+$$
 \frac{\partial (-\iota)}{\partial \beta}=\sum_{1=1}^{n}[\delta_{i}-e^{\epsilon_{i}}]\frac{x_{i}}{\sigma}
-\]`
-`\[
+$$
+$$
 \frac{\partial (-\iota)}{\partial (\log\sigma)}=\sum_{i=1}^{n}[\delta_{i}+(\delta_{i}-e^{\epsilon_{i}})\epsilon_{i}]
-\]`
+$$
 
 可以证明AFT模型是一个凸优化问题，即是说找到凸函数$-\iota(\beta,\sigma)$的最小值取决于系数向量$\beta$以及尺度参数的对数$\log\sigma$。
 在`spark.ml`中实现的优化算法为L-BFGS。
@@ -940,20 +963,22 @@ model.transform(training).show(truncate=False)
 ```
 
 ## 保序回归
-[保序回归](http://en.wikipedia.org/wiki/Isotonic_regression)是一种回归算法。保序回归的形式化问题是给定一个实数的有限集合`$Y = {y_1, y_2, ..., y_n}$`表示观测到的因变量，`$X = {x_1, x_2, ..., x_n}$`表示未知因变量，拟合模型最小化函数
+[保序回归](http://en.wikipedia.org/wiki/Isotonic_regression)是一种回归算法。保序回归的形式化问题是给定一个实数的有限集合$Y = {y_1, y_2, ..., y_n}$表示观测到的因变量，$X = {x_1, x_2, ..., x_n}$表示未知因变量，拟合模型最小化函数
 
-`\begin{equation}
+$$
+\begin{equation}
   f(x) = \sum_{i=1}^n w_i (y_i - x_i)^2
-\end{equation}`
+\end{equation}
+$$
 
-使得满足全序`$x_1\le x_2\le ...\le x_n$`，其中`$w_i$`是正权重。
+使得满足全序$x_1\le x_2\le ...\le x_n$，其中$w_i$是正权重。
 其结果函数称为保序回归，而且其解是唯一的。
 它可以被视为有顺序约束下的最小二乘法问题。
 实际上最好拟合原始数据点的保序回归是一个[单调函数](http://en.wikipedia.org/wiki/Monotonic_function)。
 
 我们实现了[pool adjacent violators算法](http://doi.org/10.1198/TECH.2010.10111)，它采用一种[并行保序回归](http://doi.org/10.1007/978-3-642-99789-1_10)。
 训练数据是一个`DataFrame`，包含标签、特征值以及权重三列。
-另外保序算法还有一个参数名为$isotonic$默认为`true`，它指定保序回归为保序（单调递增）或者反序（单调递减）。
+另外保序算法还有一个参数名为`isotonic`默认为`true`，它指定保序回归为保序（单调递增）或者反序（单调递减）。
 
 训练返回一个保序回归模型，可以被用于来预测已知或者未知特征值的标签。保序回归的结果是分段线性函数，预测规则如下：
 
@@ -991,9 +1016,9 @@ model.transform(dataset).show()
 我们也包含一个[Elastic net](http://en.wikipedia.org/wiki/Elastic_net_regularization)的`DataFrame`，一个[Zou et al, Regularization and variable selection via the elastic net](http://users.stat.umn.edu/~zouxx019/Papers/elasticnet.pdf)中提出的混合$L_1$与$L_2$正则化。
 在数学上定义为一个$L_1$与$L_2$正则化项的凸组合：
 
-`\[
+$$
 \alpha \left( \lambda \|\wv\|_1 \right) + (1-\alpha) \left( \frac{\lambda}{2}\|\wv\|_2^2 \right) , \alpha \in [0, 1], \lambda \geq 0
-\]`
+$$
 
 通过恰当设置$\alpha$，$L_1$与$L_2$正则化是elastic net的特例。举例来说，如果一个[线性回归](https://en.wikipedia.org/wiki/Linear_regression)模型以elastic net参数$\alpha$设为$1$来训练，那么它等价于[Lasso](http://en.wikipedia.org/wiki/Least_squares#Lasso_method)模型。
 反之若$\alpha$设为$0$，训练出的模型成为一个[岭回归](http://en.wikipedia.org/wiki/Tikhonov_regularization)模型。
