@@ -15,7 +15,7 @@ Logistic回归是一个流行的分类问题预测方法。它是[广义线性�
 
   > 把`family`参数设置成`"multinomial"`，多项Logistic回归可用于二分类。它将产生两组系数和截距。
 
-  > 当在有非零常数列的数据集上不带截距拟合LogisticRegressionModel时，Spark MLlib对非零常数列输出零系数。这种行为与R glmnet相同但是不同于LIBSVM。
+  > 当在有非零常数列的数据集上不带截距拟合`LogisticRegressionModel`时，Spark MLlib对非零常数列输出零系数。这种行为与R glmnet相同但是不同于LIBSVM。
 
 ### 二项Logistic回归
 
@@ -171,11 +171,8 @@ print("Accuracy: %s\nFPR: %s\nTPR: %s\nF-measure: %s\nPrecision: %s\nRecall: %s"
 
 ## 决策树分类器
 
-决策树以及其集成算法是机器学习分类和回归问题中非常流行的算法。因其易解释性、可处理类别特征、易扩展到多分类问题、不需特征缩放等性质被广泛使用。树集成算法如随机森林以及boosting算法几乎是解决分类和回归问题中表现最优的算法。
-
-决策树是一个贪心算法递归地将特征空间划分为两个部分，在同一个叶子节点的数据最后会拥有同样的标签。每次划分通过贪心的以获得最大信息增益为目的，从可选择的分裂方式中选择最佳的分裂节点。节点不纯度有节点所含类别的同质性来衡量。工具提供为分类提供两种不纯度衡量（基尼不纯度和熵），为回归提供一种不纯度衡量（方差）。
-
-`spark.ml`支持二分类、多分类以及回归的决策树算法，适用于连续特征以及类别特征。另外，对于分类问题，工具可以返回属于每种类别的概率（类别条件概率），对于回归问题工具可以返回预测在偏置样本上的方差。
+决策树以及其集成算法是机器学习分类和回归问题中非常流行的算法。
+关于`spark.ml`实现的更多信息可以在[决策树](#决策树)一节中找到。
 
 **样例**
 
@@ -231,21 +228,8 @@ print(treeModel)
 
 ## 随机森林分类器
 
-随机森林是决策树的集成算法。随机森林包含多个决策树来降低过拟合的风险。随机森林同样具有易解释性、可处理类别特征、易扩展到多分类问题、不需特征缩放等性质。
-
-随机森林分别训练一系列的决策树，所以训练过程是并行的。因算法中加入随机过程，所以每个决策树又有少量区别。通过合并每个树的预测结果来减少预测的方差，提高在测试集上的性能表现。
-
-随机性体现：
-
-* 每次迭代时，对原始数据进行二次抽样来获得不同的训练数据。
-
-* 对于每个树节点，考虑不同的随机特征子集来进行分裂。
-
-除此之外，决策时的训练过程和单独决策树训练过程相同。
-
-对新实例进行预测时，随机森林需要整合其各个决策树的预测结果。回归和分类问题的整合的方式略有不同。分类问题采取投票制，每个决策树投票给一个类别，获得最多投票的类别为最终结果。回归问题每个树得到的预测结果为实数，最终的预测结果为各个树预测结果的平均值。
-
-`spark.ml`支持二分类、多分类以及回归的随机森林算法，适用于连续特征以及类别特征。
+随机森林是常用的分类和回归算法。
+关于`spark.ml`实现的更多信息可以在[随机森林](#随机森林)一节中找到。
 
 **样例**
 
@@ -305,13 +289,8 @@ print(rfModel)  # summary only
 
 ## 梯度提升树分类器
 
-梯度提升树是一种决策树的集成算法。它通过反复迭代训练决策树来最小化损失函数。决策树类似，梯度提升树具有可处理类别特征、易扩展到多分类问题、不需特征缩放等性质。`Spark.ml`通过使用现有决策树工具来实现。
-
-梯度提升树依次迭代训练一系列的决策树。在一次迭代中，算法使用现有的集成来对每个训练实例的类别进行预测，然后将预测结果与真实的标签值进行比较。通过重新标记，来赋予预测结果不好的实例更高的权重。所以，在下次迭代中，决策树会对先前的错误进行修正。
-
-对实例标签进行重新标记的机制由损失函数来指定。每次迭代过程中，梯度迭代树在训练数据上进一步减少损失函数的值。`Spark.ml`为分类问题提供一种损失函数（Log Loss），为回归问题提供两种损失函数（平方误差与绝对误差）。
-
-`Spark.ml`支持二分类以及回归的随机森林算法，适用于连续特征以及类别特征。
+梯度提升树基于决策树的集成，是一种常用的分类和回归算法。
+关于`spark.ml`实现的更多信息可以在[梯度提升树](#梯度提升树)一节中找到。
 
 **样例**
 
@@ -543,20 +522,17 @@ accuracy = evaluator.evaluate(predictions)
 print("Test set accuracy = " + str(accuracy))
 ```
 
-# Regression
+# 回归
 
-## Linear regression
+## 线性回归
 
-The interface for working with linear regression models and model
-summaries is similar to the Logistic回归 case。
+线性回归模型与摘要的接口类似于Logistic回归。
 
-  > 当拟合LinearRegressionModel without 截距on dataset with 常数非零column by "l-bfgs" solver, Spark MLlib outputs zero 参数for 常数非零columns。这种行为 is the same as R glmnet 但是不同于LIBSVM。
+  > 当在有非零常数列的数据集上不带截距拟合`LogisticRegressionModel`时，Spark MLlib对非零常数列输出零系数。这种行为与R glmnet相同但是不同于LIBSVM。
 
 **样例**
 
-The following
-example demonstrates training一个elastic net regularized linear
-regression model and 提取模型摘要统计。
+下面的例子展示了训练一个elastic net正则化的线性回归模型并提取模型摘要统计。
 <!--- TODO: Add python model summaries once implemented -->
 
 关于参数的更多细节可以在[Python API文档](api/python/pyspark.ml.md#pyspark.ml.regression.LinearRegression)中找到。
@@ -573,11 +549,11 @@ lr = LinearRegression(maxIter=10, regParam=0.3, elasticNetParam=0.8)
 # 拟合模型
 lrModel = lr.fit(training)
 
-# 打印参数and 截距for linear regression
+# 打印线性回归系数和截距
 print("Coefficients: %s" % str(lrModel.coefficients))
 print("Intercept: %s" % str(lrModel.intercept))
 
-# Summarize 模型 over 训练集 and print out some 指标
+# 训练集上的模型摘要并打印一些指标
 trainingSummary = lrModel.summary
 print("numIterations: %d" % trainingSummary.totalIterations)
 print("objectiveHistory: %s" % str(trainingSummary.objectiveHistory))
@@ -586,119 +562,104 @@ print("RMSE: %f" % trainingSummary.rootMeanSquaredError)
 print("r2: %f" % trainingSummary.r2)
 ```
 
-## Generalized linear regression
+## 广义线性模型
 
-Contrasted with linear regression where the output is assumed to follow一个Gaussian
-distribution, [generalized linear models](https://en.wikipedia.org/wiki/Generalized_linear_model) (GLMs) are specifications of linear models where the response variable $Y_i$ follows some
-distribution from the [exponential family of distributions](https://en.wikipedia.org/wiki/Exponential_family)。
-Spark's `GeneralizedLinearRegression` interface
-allows for flexible specification of GLMs which 可用于various types of
-prediction problems including linear regression, Poisson regression, Logistic回归, and others。
-Currently in `spark.ml`, only一个subset of the exponential family distributions are supported and they are listed
-[below](#available-families)。
+与线性回归假设输出服从高斯分布不同，[广义线性模型](https://en.wikipedia.org/wiki/Generalized_linear_model)（GLMs）指定线性模型的因变量$Y_i$服从[指数族分布](https://en.wikipedia.org/wiki/Exponential_family)。
+Spark的`GeneralizedLinearRegression`接口允许指定GLMs包括线性回归、泊松回归、逻辑回归等来处理多种预测问题。
+目前`spark.ml`仅支持指数族分布中的一部分类型，[如下](#available-families)：
 
-**NOTE**: Spark currently only 支持 up to 4096 features through its `GeneralizedLinearRegression`
-interface, and will throw一个exception if this constraint is exceeded。See the [advanced section](ml-advanced)了解更多细节。
- Still, for linear and Logistic回归, models with一个increased number of features can be trained
- using the `LinearRegression` and `LogisticRegression` estimators。
+**注意**：目前Spark的`GeneralizedLinearRegression`仅支持最多4096个特征，如果特征超过4096个将会抛出异常。请看[advanced section](ml-advanced.md)了解更多细节。
+对于线性回归和Logistic回归，如果模型特征数量太多，则可通过`LinearRegression`和`LogisticRegression`来训练。
 
-GLMs require exponential family distributions that can be written in their "canonical" or "natural" form, aka
-[natural exponential family distributions](https://en.wikipedia.org/wiki/Natural_exponential_family)。The form of一个natural exponential family distribution is given as:
+GLMs要求的指数型分布可以为正则或者自然形式[自然形式指数族分布](https://en.wikipedia.org/wiki/Natural_exponential_family)。自然指数族分布为如下形式：
 
 $$
 f_Y(y|\theta, \tau) = h(y, \tau)\exp{\left( \frac{\theta \cdot y - A(\theta)}{d(\tau)} \right)}
 $$
 
-where $\theta$ is the parameter of interest and $\tau$ is一个dispersion parameter。In一个GLM the response variable $Y_i$ is assumed to be drawn from一个natural exponential family distribution:
+其中$\theta$是强度参数，$\tau$是分散度参数。在GLM中因变量$Y_i$服从自然指数族分布：
 
 $$
 Y_i \sim f\left(\cdot|\theta_i, \tau \right)
 $$
 
-where the parameter of interest $\theta_i$ is related to the expected value of the response variable $\mu_i$ by
+其中强度参数$\theta_i$与因变量$\mu_i$的期望值联系如下：
 
 $$
 \mu_i = A'(\theta_i)
 $$
 
-Here, $A'(\theta_i)$ is defined by the form of the distribution selected。GLMs也allow specification
-of一个连接函数, which defines the relationship between the expected value of the response variable $\mu_i$
-and the so called _linear predictor_ $\eta_i$:
+其中$A'(\theta_i)$由所选择的分布形式所决定。GLMs同样允许指定连接函数，连接函数决定了因变量期望值与 _线性预测器_ $\eta_i$之间的关系：
 
 $$
 g(\mu_i) = \eta_i = \vec{x_i}^T \cdot \vec{\beta}
 $$
 
-Often, the 连接函数 is chosen such that $A' = g^{-1}$, which yields一个simplified relationship
-between the parameter of interest $\theta$ and the linear predictor $\eta$。In this case, the link
-function $g(\mu)$ is said to be the "canonical" 连接函数。
+通常，连接函数的选择如$A' = g^{-1}$，在强度参数$\theta$与线性预测器$\eta$之间产生一个简单的关系。这种情况下，连接函数$g(\mu)$也称为正则连接函数：
 
 $$
 \theta_i = A'^{-1}(\mu_i) = g(g^{-1}(\eta_i)) = \eta_i
 $$
 
-A GLM finds the regression 参数$\vec{\beta}$ which maximize the 似然 function。
+GLM通过最大化似然函数来求得回归系数$\vec{\beta}$：
 
 $$
 \max_{\vec{\beta}} \mathcal{L}(\vec{\theta}|\vec{y},X) =
 \prod_{i=1}^{N} h(y_i, \tau) \exp{\left(\frac{y_i\theta_i - A(\theta_i)}{d(\tau)}\right)}
 $$
 
-where the parameter of interest $\theta_i$ is related to the regression 参数$\vec{\beta}$
-by
+其中强度参数$\theta_i$和回归系数$\vec{\beta}$的联系如下：
 
 $$
 \theta_i = A'^{-1}(g^{-1}(\vec{x_i} \cdot \vec{\beta}))
 $$
 
-Spark's generalized linear regression interface也提供 summary统计 for diagnosing the
-fit of GLM models, including residuals, p-values, deviances, the Akaike information criterion, and
-others。
+Spark的广义线性模型接口也提供摘要统计来诊断GLM模型的拟合程度，包括残差、p值、偏度、Akaike信息量等等。
 
-[See here](http://data.princeton.edu/wws509/notes/) for一个more comprehensive review of GLMs and their applications。
+可参考更全面的广义线性模型和应用[复习](http://data.princeton.edu/wws509/notes/)。
 
-###  Available families
+###  可用的分布族
 
 <table class="table">
   <thead>
     <tr>
-      <th>Family</th>
-      <th>Response Type</th>
-      <th>Supported Links</th></tr>
+      <th>分布族</th>
+      <th>因变量类型</th>
+      <th>支持的连接类型</th></tr>
   </thead>
   <tbody>
     <tr>
-      <td>Gaussian</td>
-      <td>Continuous</td>
+      <td>高斯</td>
+      <td>连续型</td>
       <td>Identity*, Log, Inverse</td>
     </tr>
     <tr>
-      <td>Binomial</td>
-      <td>Binary</td>
+      <td>二项</td>
+      <td>二值型</td>
       <td>Logit*, Probit, CLogLog</td>
     </tr>
     <tr>
-      <td>Poisson</td>
-      <td>Count</td>
+      <td>泊松</td>
+      <td>计数型</td>
       <td>Log*, Identity, Sqrt</td>
     </tr>
     <tr>
-      <td>Gamma</td>
-      <td>Continuous</td>
+      <td>伽马</td>
+      <td>连续型</td>
       <td>Inverse*, Idenity, Log</td>
     </tr>
     <tr>
-      <td>Tweedie</td>
-      <td>Zero-inflated continuous</td>
-      <td>Power 连接函数</td>
+      <td>[Tweedie](https://en.wikipedia.org/wiki/Tweedie_distribution)</td>
+      <td>零膨胀连续型</td>
+      <td>幂连接函数</td>
     </tr>
-    <tfoot><tr><td colspan="4">* Canonical Link</td></tr></tfoot>
+    <tfoot><tr><td colspan="4">* 正则连接函数</td></tr></tfoot>
   </tbody>
 </table>
 
 **样例**
 
-下面的例子 demonstrates training一个GLM with一个Gaussian response and identity 连接函数 and 提取模型摘要统计。
+下面的例子展示了训练一个一个高斯响应与恒等连接函数的GLM并提取模型摘要统计。
 
 请参考[Python API文档](api/python/pyspark.ml.md#pyspark.ml.regression.GeneralizedLinearRegression)了解更多细节。
 
@@ -714,11 +675,11 @@ glr = GeneralizedLinearRegression(family="gaussian", link="identity", maxIter=10
 # 拟合模型
 model = glr.fit(dataset)
 
-# 打印系数and 截距for generalized linear regression model
+# 打印广义线性模型的系数和截距
 print("Coefficients: " + str(model.coefficients))
 print("Intercept: " + str(model.intercept))
 
-# Summarize 模型 over 训练集 and print out some 指标
+# 训练集上的模型摘要并打印一些指标
 summary = model.summary
 print("Coefficient Standard Errors: " + str(summary.coefficientStandardErrors))
 print("T Values: " + str(summary.tValues))
@@ -733,15 +694,14 @@ print("Deviance Residuals: ")
 summary.residuals().show()
 ```
 
-## Decision tree regression
+## 回归树
 
-Decision trees are一个popular family of 分类and regression methods。
-More information about the `spark.ml` implementation can be found further in the [section on decision trees](#decision-trees)。
+决策树以及其集成算法是机器学习分类和回归问题中非常流行的算法。
+关于`spark.ml`实现的更多信息可以在[决策树](#决策树)一节中找到。
 
 **样例**
 
-下面的例子s load一个dataset in LibSVM format, split it into training and test sets, 训练on the first dataset, and then evaluate on the held-out test set。
-We use一个feature transformer to index categorical features, adding metadata to the `DataFrame` which the Decision Tree algorithm can recognize。
+下面的例子导入LibSVM格式数据，并将之划分为训练数据和测试数据。使用第一部分数据进行训练，剩下数据来测试。训练之前我们使用了一种数据预处理方法来对特征进行转换，并且向`DataFrame`添加了元数据来让树结构算法能够识别。
 
 关于参数的更多细节可以在[Python API文档](api/python/pyspark.ml.md#pyspark.ml.regression.DecisionTreeRegressor)中找到。
 
@@ -751,30 +711,30 @@ from pyspark.ml.regression import DecisionTreeRegressor
 from pyspark.ml.feature import VectorIndexer
 from pyspark.ml.evaluation import RegressionEvaluator
 
-# Load the data stored in LIBSVM format as一个DataFrame。
+# Load the data stored in LIBSVM format as a DataFrame.
 data = spark.read.format("libsvm").load("data/mllib/sample_libsvm_data.txt")
 
-# Automatically identify categorical features, and index them。
-# We specify maxCategories so features with > 4 distinct values are treated as continuous。
+# Automatically identify categorical features, and index them.
+# We specify maxCategories so features with > 4 distinct values are treated as continuous.
 featureIndexer =\
     VectorIndexer(inputCol="features", outputCol="indexedFeatures", maxCategories=4).fit(data)
 
 # Split the data into training and test sets (30% held out for testing)
 (trainingData, testData) = data.randomSplit([0.7, 0.3])
 
-# Train一个DecisionTree model。
+# Train a DecisionTree model.
 dt = DecisionTreeRegressor(featuresCol="indexedFeatures")
 
-# Chain indexer and tree in一个Pipeline
+# Chain indexer and tree in a Pipeline
 pipeline = Pipeline(stages=[featureIndexer, dt])
 
-# 训练model。 This也runs the indexer。
+# Train model.  This also runs the indexer.
 model = pipeline.fit(trainingData)
 
-# Make predictions。
+# Make predictions.
 predictions = model.transform(testData)
 
-# Select example rows to display。
+# Select example rows to display.
 predictions.select("prediction", "label", "features").show(5)
 
 # Select (prediction, true label) and compute test error
@@ -788,15 +748,14 @@ treeModel = model.stages[1]
 print(treeModel)
 ```
 
-## Random forest regression
+## 随机森林回归
 
-Random forests are一个popular family of 分类and regression methods。
-More information about the `spark.ml` implementation can be found further in the [section on random forests](#random-forests)。
+随机森林是机器学习分类和回归问题中非常流行的算法。
+关于`spark.ml`实现的更多信息可以在[随机森林](#随机森林)一节中找到。
 
 **样例**
 
-下面的例子s load一个dataset in LibSVM format, split it into training and test sets, 训练on the first dataset, and then evaluate on the held-out test set。
-We use一个feature transformer to index categorical features, adding metadata to the `DataFrame` which the tree-based 算法 can recognize。
+下面的例子导入LibSVM格式数据，并将之划分为训练数据和测试数据。使用第一部分数据进行训练，剩下数据来测试。训练之前我们使用了一种数据预处理方法来对特征进行转换，并且向`DataFrame`添加了元数据来让树结构算法能够识别。
 
 请参考[Python API文档](api/python/pyspark.ml.md#pyspark.ml.regression.RandomForestRegressor)了解更多细节。
 
@@ -806,30 +765,30 @@ from pyspark.ml.regression import RandomForestRegressor
 from pyspark.ml.feature import VectorIndexer
 from pyspark.ml.evaluation import RegressionEvaluator
 
-# Load and parse the data file, converting it to一个DataFrame。
+# Load and parse the data file, converting it to a DataFrame.
 data = spark.read.format("libsvm").load("data/mllib/sample_libsvm_data.txt")
 
-# Automatically identify categorical features, and index them。
-# Set maxCategories so features with > 4 distinct values are treated as continuous。
+# Automatically identify categorical features, and index them.
+# Set maxCategories so features with > 4 distinct values are treated as continuous.
 featureIndexer =\
     VectorIndexer(inputCol="features", outputCol="indexedFeatures", maxCategories=4).fit(data)
 
 # Split the data into training and test sets (30% held out for testing)
 (trainingData, testData) = data.randomSplit([0.7, 0.3])
 
-# Train一个RandomForest model。
+# Train a RandomForest model.
 rf = RandomForestRegressor(featuresCol="indexedFeatures")
 
-# Chain indexer and forest in一个Pipeline
+# Chain indexer and forest in a Pipeline
 pipeline = Pipeline(stages=[featureIndexer, rf])
 
-# 训练model。 This也runs the indexer。
+# Train model.  This also runs the indexer.
 model = pipeline.fit(trainingData)
 
-# Make predictions。
+# Make predictions.
 predictions = model.transform(testData)
 
-# Select example rows to display。
+# Select example rows to display.
 predictions.select("prediction", "label", "features").show(5)
 
 # Select (prediction, true label) and compute test error
@@ -842,15 +801,14 @@ rfModel = model.stages[1]
 print(rfModel)  # summary only
 ```
 
-## Gradient-boosted tree regression
+## 梯度提升树回归
 
-Gradient-boosted trees (GBTs) are一个popular regression method using ensembles of decision trees。
-More information about the `spark.ml` implementation can be found further in the [section on GBTs](#gradient-boosted-trees-gbts)。
+梯度提升树回归是机器学习分类和回归问题中非常流行的算法。
+关于`spark.ml`实现的更多信息可以在[梯度提升树](#梯度提升树)一节中找到。
 
 **样例**
 
-Note: For this example dataset, `GBTRegressor` actually only needs 1 iteration, 但是that will not
-be true in general。
+**注意**：下面的例子中，`GBTRegressor`仅迭代了一次，在实际操作中是不现实的。
 
 请参考[Python API文档](api/python/pyspark.ml.md#pyspark.ml.regression.GBTRegressor)了解更多细节。
 
@@ -860,30 +818,30 @@ from pyspark.ml.regression import GBTRegressor
 from pyspark.ml.feature import VectorIndexer
 from pyspark.ml.evaluation import RegressionEvaluator
 
-# Load and parse the data file, converting it to一个DataFrame。
+# Load and parse the data file, converting it to a DataFrame.
 data = spark.read.format("libsvm").load("data/mllib/sample_libsvm_data.txt")
 
-# Automatically identify categorical features, and index them。
-# Set maxCategories so features with > 4 distinct values are treated as continuous。
+# Automatically identify categorical features, and index them.
+# Set maxCategories so features with > 4 distinct values are treated as continuous.
 featureIndexer =\
     VectorIndexer(inputCol="features", outputCol="indexedFeatures", maxCategories=4).fit(data)
 
 # Split the data into training and test sets (30% held out for testing)
 (trainingData, testData) = data.randomSplit([0.7, 0.3])
 
-# Train一个GBT model。
+# Train a GBT model.
 gbt = GBTRegressor(featuresCol="indexedFeatures", maxIter=10)
 
-# Chain indexer and GBT in一个Pipeline
+# Chain indexer and GBT in a Pipeline
 pipeline = Pipeline(stages=[featureIndexer, gbt])
 
-# 训练model。 This也runs the indexer。
+# Train model.  This also runs the indexer.
 model = pipeline.fit(trainingData)
 
-# Make predictions。
+# Make predictions.
 predictions = model.transform(testData)
 
-# Select example rows to display。
+# Select example rows to display.
 predictions.select("prediction", "label", "features").show(5)
 
 # Select (prediction, true label) and compute test error
@@ -896,49 +854,50 @@ gbtModel = model.stages[1]
 print(gbtModel)  # summary only
 ```
 
-## Survival regression
+## 生存回归
 
 
-In `spark.ml`, we implement the [Accelerated failure time (AFT)](https://en.wikipedia.org/wiki/Accelerated_failure_time_model)
-model which is一个parametric survival regression model for censored data。
-It describes一个model for the log of survival time, so it's often called a
-log-linear model for survival analysis。不同于a
-[Proportional hazards](https://en.wikipedia.org/wiki/Proportional_hazards_model) model
-designed for the same purpose, the AFT model is easier to parallelize
-because each instance contributes to the objective function independently。
+在`spark.ml`中，我们实现[加速失效时间模型（AFT）](https://en.wikipedia.org/wiki/Accelerated_failure_time_model)，对于截尾数据它是一个参数化生存回归的模型。
+它描述了一个有对数生存时间的模型，所以它也常被称为生存分析的对数线性模型。
+不同于应对同样问题的[比例危险模型](https://en.wikipedia.org/wiki/Proportional_hazards_model)，AFT模型中每个实例对目标函数的贡献是独立的，所以其更容易并行化。
 
-Given the values of the covariates $x^{'}$, for random lifetime $t_{i}$ of
-subjects i = 1, ..., n, with possible right-censoring,
-the 似然 function under the AFT model is given as:
+给定协变量$x^{'}$的值，对于$i = 1, ..., n$，可能右截尾的随机生存时间$t_{i}$，AFT模型下的似然函数如下：
+
 `\[
 L(\beta,\sigma)=\prod_{i=1}^n[\frac{1}{\sigma}f_{0}(\frac{\log{t_{i}}-x^{'}\beta}{\sigma})]^{\delta_{i}}S_{0}(\frac{\log{t_{i}}-x^{'}\beta}{\sigma})^{1-\delta_{i}}
 \]`
-Where $\delta_{i}$ is the indicator of the event has occurred i.e。uncensored or not。
-Using $\epsilon_{i}=\frac{\log{t_{i}}-x^{'}\beta}{\sigma}$, the log-似然 function
-assumes the form:
+
+其中$\delta_{i}$是指示事件i发生了，即有无检测到。
+令$\epsilon_{i}=\frac{\log{t_{i}}-x^{'}\beta}{\sigma}$，则对数似然函数为以下形式：
+
 `\[
 \iota(\beta,\sigma)=\sum_{i=1}^{n}[-\delta_{i}\log\sigma+\delta_{i}\log{f_{0}}(\epsilon_{i})+(1-\delta_{i})\log{S_{0}(\epsilon_{i})}]
 \]`
-Where $S_{0}(\epsilon_{i})$ is the baseline survivor function,
-and $f_{0}(\epsilon_{i})$ is the corresponding density function。
 
-The most commonly used AFT model is based on the Weibull distribution of the survival time。
-The Weibull distribution for lifetime 对应于the extreme value distribution for the
-log of the lifetime, and the $S_{0}(\epsilon)$ function is:
+其中$S_{0}(\epsilon_{i})$是基线生存函数，$f_{0}(\epsilon_{i})$是对应的密度函数。
+
+最常用的AFT模型基于Weibull分布的生存时间。
+Weibull分布的生存时间对应于生存时间对数的极值分布，$S_{0}(\epsilon)$函数如下：
+
 `\[
 S_{0}(\epsilon_{i})=\exp(-e^{\epsilon_{i}})
 \]`
-the $f_{0}(\epsilon_{i})$ function is:
+
+$f_{0}(\epsilon_{i})$函数如下：
+
 `\[
 f_{0}(\epsilon_{i})=e^{\epsilon_{i}}\exp(-e^{\epsilon_{i}})
 \]`
-The log-似然 function for AFT model with一个Weibull distribution of lifetime is:
+
+Weibull分布的生存时间AFT模型对数似然函数如下：
+
 `\[
 \iota(\beta,\sigma)= -\sum_{i=1}^n[\delta_{i}\log\sigma-\delta_{i}\epsilon_{i}+e^{\epsilon_{i}}]
 \]`
-Due to minimizing the negative log-似然 equivalent to maximum一个posteriori probability,
-the loss function we use to optimize is $-\iota(\beta,\sigma)$。
-The gradient functions for $\beta$ and $\log\sigma$ respectively are:
+
+由于最小化负对数似然函数等于最大化后验概率，所以我们要优化的损失函数为$-\iota(\beta,\sigma)$。
+分别对$\beta$以及$\log\sigma$求导：
+
 `\[
 \frac{\partial (-\iota)}{\partial \beta}=\sum_{1=1}^{n}[\delta_{i}-e^{\epsilon_{i}}]\frac{x_{i}}{\sigma}
 \]`
@@ -946,14 +905,12 @@ The gradient functions for $\beta$ and $\log\sigma$ respectively are:
 \frac{\partial (-\iota)}{\partial (\log\sigma)}=\sum_{i=1}^{n}[\delta_{i}+(\delta_{i}-e^{\epsilon_{i}})\epsilon_{i}]
 \]`
 
-The AFT model can be formulated as一个convex optimization problem,
-i.e。the task of finding一个minimizer of一个convex function $-\iota(\beta,\sigma)$
-that depends on the 参数vector $\beta$ and the log of scale parameter $\log\sigma$。
-The optimization algorithm underlying the implementation is L-BFGS。
-The implementation matches the result from R's survival function
+可以证明AFT模型是一个凸优化问题，即是说找到凸函数$-\iota(\beta,\sigma)$的最小值取决于系数向量$\beta$以及尺度参数的对数$\log\sigma$。
+在`spark.ml`中实现的优化算法为L-BFGS。
+这个实现与R中的生存函数相匹配
 [survreg](https://stat.ethz.ch/R-manual/R-devel/library/survival/html/survreg.html)
 
-  > 当拟合AFTSurvivalRegressionModel without 截距on dataset with 常数非零column, Spark MLlib outputs zero 参数for 常数非零columns。这种行为 is 不同于R survival::survreg。
+  > 当在有非零常数列的数据集上不带截距拟合`AFTSurvivalRegressionModel`时，Spark MLlib对非零常数列输出零系数。这种行为不同于R的`survival::survreg`。
 
 **样例**
 
@@ -975,142 +932,100 @@ aft = AFTSurvivalRegression(quantileProbabilities=quantileProbabilities,
 
 model = aft.fit(training)
 
-# 打印coefficients, 截距and scale parameter for AFT survival regression
+# Print the coefficients, intercept and scale parameter for AFT survival regression
 print("Coefficients: " + str(model.coefficients))
 print("Intercept: " + str(model.intercept))
 print("Scale: " + str(model.scale))
 model.transform(training).show(truncate=False)
 ```
 
-## Isotonic regression
-[Isotonic regression](http://en.wikipedia.org/wiki/Isotonic_regression)
-belongs to the family of regression 算法。Formally isotonic regression is一个problem where
-given一个finite set of real numbers `$Y = {y_1, y_2, ..., y_n}$` representing observed responses
-and `$X = {x_1, x_2, ..., x_n}$` the unknown response values to be fitted
-finding一个function that minimizes
+## 保序回归
+[保序回归](http://en.wikipedia.org/wiki/Isotonic_regression)是一种回归算法。保序回归的形式化问题是给定一个实数的有限集合`$Y = {y_1, y_2, ..., y_n}$`表示观测到的因变量，`$X = {x_1, x_2, ..., x_n}$`表示未知因变量，拟合模型最小化函数
 
 `\begin{equation}
   f(x) = \sum_{i=1}^n w_i (y_i - x_i)^2
 \end{equation}`
 
-with respect to complete order subject to
-`$x_1\le x_2\le ...\le x_n$` where `$w_i$` are positive weights。
-The resulting function is called isotonic regression and it is unique。
-It can be viewed as least squares problem under order restriction。
-Essentially isotonic regression is a
-[monotonic function](http://en.wikipedia.org/wiki/Monotonic_function)
-best 拟合the original data points。
+使得满足全序`$x_1\le x_2\le ...\le x_n$`，其中`$w_i$`是正权重。
+其结果函数称为保序回归，而且其解是唯一的。
+它可以被视为有顺序约束下的最小二乘法问题。
+实际上最好拟合原始数据点的保序回归是一个[单调函数](http://en.wikipedia.org/wiki/Monotonic_function)。
 
-We implement a
-[pool adjacent violators algorithm](http://doi.org/10.1198/TECH.2010.10111)
-which uses一个approach to
-[parallelizing isotonic regression](http://doi.org/10.1007/978-3-642-99789-1_10)。
-The training input is一个DataFrame which contains three columns
-label, features and weight。Additionally, IsotonicRegression algorithm has one
-optional parameter called $isotonic$ defaulting to true。
-This argument specifies if the isotonic regression is
-isotonic (monotonically increasing) or antitonic (monotonically decreasing)。
+我们实现了[pool adjacent violators算法](http://doi.org/10.1198/TECH.2010.10111)，它采用一种[并行保序回归](http://doi.org/10.1007/978-3-642-99789-1_10)。
+训练数据是一个`DataFrame`，包含标签、特征值以及权重三列。
+另外保序算法还有一个参数名为$isotonic$默认为`true`，它指定保序回归为保序（单调递增）或者反序（单调递减）。
 
-Training returns一个IsotonicRegressionModel that 可用于predict
-labels for both known and unknown features。The result of isotonic regression
-is treated as piecewise linear function。The rules for prediction therefore are:
+训练返回一个保序回归模型，可以被用于来预测已知或者未知特征值的标签。保序回归的结果是分段线性函数，预测规则如下：
 
-* If the prediction input exactly matches一个training feature
-  then associated prediction is returned。In case there are multiple predictions with the same
-  feature then one of them is returned。Which one is undefined
-  (same as java.util.Arrays.binarySearch)。
-* If the prediction input is lower or higher than all training features
-  then prediction with lowest or highest feature is returned respectively。
-  In case there are multiple predictions with the same feature
-  then the lowest or highest is returned respectively。
-* If the prediction input falls between two training features then prediction is treated
-  as piecewise linear function and interpolated value is calculated from the
-  predictions of the two closest features。In case there are multiple values
-  with the same feature then the same rules as in previous point are used。
+* 如果预测输入与训练中的特征值完全匹配，则返回相应标签。如果一个特征值对应多个预测标签值，则返回其中一个，具体是哪一个未指定（类似`java.util.Arrays.binarySearch`）。
+
+* 如果预测输入比训练中的所有特征值都高（或者都低），则相应返回最高特征值或者最低特征值对应标签。如果一个特征值对应多个预测标签值，则相应返回其中最高值或者最低值。
+
+* 如果预测输入落入两个特征值之间，则预测将会是一个分段线性函数，其值由两个最近的特征值的预测值插值计算得到。如果一个特征值对应多个预测标签值，则使用上述两种情况中的处理方式解决。
 
 **样例**
 
-请参考[`IsotonicRegression` Python docs](api/python/pyspark.ml.md#pyspark.ml.regression.IsotonicRegression) for 更多细节on the API。
+请参考[`IsotonicRegression`的Python文档](api/python/pyspark.ml.md#pyspark.ml.regression.IsotonicRegression)了解API的更多细节。
 
 ```python
 from pyspark.ml.regression import IsotonicRegression
 
-# Loads data。
+# Loads data.
 dataset = spark.read.format("libsvm")\
     .load("data/mllib/sample_isotonic_regression_libsvm_data.txt")
 
-# Trains一个isotonic regression model。
+# Trains an isotonic regression model.
 model = IsotonicRegression().fit(dataset)
 print("Boundaries in increasing order: %s\n" % str(model.boundaries))
 print("Predictions associated with the boundaries: %s\n" % str(model.predictions))
 
-# Makes predictions。
+# Makes predictions.
 model.transform(dataset).show()
 ```
 
-# Linear methods
+# 线性方法
 
-We implement popular linear methods such as logistic
-regression and linear least squares with $L_1$ or $L_2$正则化。
-Refer to [the linear methods guide for the RDD-based API](mllib-linear-methods.md) for
-details about implementation and tuning; this information is still relevant。
+我们实现了常用的线性方法比如logistic回归与带$L_1$或$L_2$正则化的线性最小方。
+请参考[RDD接口的线性方法指南](mllib-linear-methods.md)了解实现与调优的更多细节，这些信息仍然有效。
 
-We也include一个DataFrame API for [Elastic
-net](http://en.wikipedia.org/wiki/Elastic_net_regularization),一个hybrid
-of $L_1$ and $L_2$正则化 proposed in [Zou et al,正则化
-and variable selection via the elastic
-net](http://users.stat.umn.edu/~zouxx019/Papers/elasticnet.pdf)。
-Mathematically, it is defined as一个convex combination of the $L_1$ and
-the $L_2$正则化 terms:
+我们也包含一个[Elastic net](http://en.wikipedia.org/wiki/Elastic_net_regularization)的`DataFrame`，一个[Zou et al, Regularization and variable selection via the elastic net](http://users.stat.umn.edu/~zouxx019/Papers/elasticnet.pdf)中提出的混合$L_1$与$L_2$正则化。
+在数学上定义为一个$L_1$与$L_2$正则化项的凸组合：
+
 `\[
 \alpha \left( \lambda \|\wv\|_1 \right) + (1-\alpha) \left( \frac{\lambda}{2}\|\wv\|_2^2 \right) , \alpha \in [0, 1], \lambda \geq 0
 \]`
-By setting $\alpha$ properly, elastic net contains both $L_1$ and $L_2$
-regularization as special cases。For example, if一个[linear
-regression](https://en.wikipedia.org/wiki/Linear_regression) model is
-trained with the elastic net parameter $\alpha$ set to $1$, it is
-equivalent to a
-[Lasso](http://en.wikipedia.org/wiki/Least_squares#Lasso_method) model。
-On the other hand, if $\alpha$ is set to $0$, the trained model reduces
-to一个[ridge
-regression](http://en.wikipedia.org/wiki/Tikhonov_regularization) model。
-We implement Pipelines API for both linear regression and logistic
-regression with elastic net正则化。
 
-# Decision trees
+通过恰当设置$\alpha$，$L_1$与$L_2$正则化是elastic net的特例。举例来说，如果一个[线性回归](https://en.wikipedia.org/wiki/Linear_regression)模型以elastic net参数$\alpha$设为$1$来训练，那么它等价于[Lasso](http://en.wikipedia.org/wiki/Least_squares#Lasso_method)模型。
+反之若$\alpha$设为$0$，训练出的模型成为一个[岭回归](http://en.wikipedia.org/wiki/Tikhonov_regularization)模型。
+我们为带elastic net正则化的线性回归和logistic回归两者实现了管道API。
 
-[Decision trees](http://en.wikipedia.org/wiki/Decision_tree_learning)
-and their ensembles are popular methods for the machine learning tasks of
-分类and regression。Decision trees are widely used since they are easy to interpret,
-handle categorical features, extend to the multiclass 分类setting, do not require
-feature scaling, and are able to capture non-linearities and feature interactions。Tree ensemble
-算法 such as random forests and boosting are among the top performers for 分类and
-regression tasks。
+# 决策树
 
-The `spark.ml` implementation 支持 decision trees for binary and multiclass 分类and for regression,
-using both continuous and categorical features。The implementation partitions data by rows,
-allowing distributed training with millions or even billions of instances。
+[决策树](http://en.wikipedia.org/wiki/Decision_tree_learning)以及其集成算法是机器学习分类和回归问题中非常流行的算法。
 
-Users can find more information about the decision tree algorithm in the [MLlib Decision Tree guide](mllib-decision-tree.md)。
-The main differences between this API and the [original MLlib Decision Tree API](mllib-decision-tree.md) are:
+决策树因其易解释性、可处理类别特征、易扩展到多分类问题、不需特征缩放以及能够捕捉非线性和特征相互作用等性质被广泛使用。树集成算法如随机森林以及boosting算法几乎是解决分类和回归问题中表现最优的算法。
 
-* support for ML Pipelines
-* separation of Decision Trees for 分类vs。regression
-* use of DataFrame metadata to distinguish continuous and categorical features
+决策树是一个贪心算法递归地将特征空间划分为两个部分，在同一个叶子节点的数据最后会拥有同样的标签。每次划分通过贪心的以获得最大信息增益为目的，从可选择的分裂方式中选择最佳的分裂节点。节点不纯度有节点所含类别的同质性来衡量。工具提供为分类提供两种不纯度衡量（基尼不纯度和熵），为回归提供一种不纯度衡量（方差）。
 
+`spark.ml`支持二分类、多分类以及回归的决策树算法，适用于连续特征以及类别特征。这里的实现以行划分数据，容许百万至十亿级实例的分布式训练。
 
-The Pipelines API for Decision Trees offers一个bit more functionality than the original API。
-In particular, for分类, users can get the predicted probability of each class (a.k.a。class conditional probabilities);
-for regression, users can get the biased sample variance of prediction。
+用户可以在[MLlib决策树指南](mllib-decision-tree.md)中找到决策树算法的更多信息。
+这个API与[之前的MLlib决策树API](mllib-decision-tree.md)之间的主要差别如下:
 
-Ensembles of trees (Random Forests and Gradient-Boosted Trees) are described below in the [Tree ensembles section](#tree-ensembles)。
+* 支持机器学习管道
+* 区分了用于分类或回归的决策树
+* 使用`DataFrame`元数据来区分连续和类别特征
 
-## Inputs and Outputs
+决策树的管道API比之前的API提供了稍微多一点的功能。对于分类问题，工具可以返回属于每种类别的概率（类别条件概率），对于回归问题工具可以返回预测在偏置样本上的方差。
 
-We list the input and output (prediction) column types here。
-All output columns are optional; to exclude一个output column, set its corresponding Param to一个空字符串。
+树集成算法（随机森林和梯度提升树）在[树集成](#树集成)一节中说明。
 
-### Input Columns
+## 输入和输出
+
+我们在这里列出了输入和输出（预测）列的类型。
+所有输出列都是可选的；若需要排除一个列，将它的对应参数设为一个空字符串。
+
+### 输入列
 
 <table class="table">
   <thead>
@@ -1126,18 +1041,18 @@ All output columns are optional; to exclude一个output column, set its correspo
       <td>labelCol</td>
       <td>Double</td>
       <td>"label"</td>
-      <td>Label to predict</td>
+      <td>预测标签</td>
     </tr>
     <tr>
       <td>featuresCol</td>
       <td>Vector</td>
       <td>"features"</td>
-      <td>Feature vector</td>
+      <td>特征向量</td>
     </tr>
   </tbody>
 </table>
 
-### Output Columns
+### 输出列
 
 <table class="table">
   <thead>
@@ -1154,65 +1069,77 @@ All output columns are optional; to exclude一个output column, set its correspo
       <td>predictionCol</td>
       <td>Double</td>
       <td>"prediction"</td>
-      <td>Predicted label</td>
+      <td>预测标签</td>
       <td></td>
     </tr>
     <tr>
       <td>rawPredictionCol</td>
       <td>Vector</td>
       <td>"rawPrediction"</td>
-      <td>Vector of length # classes, with the counts of training instance labels at the tree node which makes the prediction</td>
-      <td>分类only</td>
+      <td>类别数长度的向量，表示在做出预测的树节点上的训练实例计数</td>
+      <td>仅限分类</td>
     </tr>
     <tr>
       <td>probabilityCol</td>
       <td>Vector</td>
       <td>"probability"</td>
-      <td>Vector of length # classes equal to rawPrediction normalized to一个多项distribution</td>
-      <td>分类only</td>
+      <td>类别数长度的向量，等于一个多项分布归一化的`rawPrediction`</td>
+      <td>仅限分类</td>
     </tr>
     <tr>
       <td>varianceCol</td>
       <td>Double</td>
       <td></td>
-      <td>The biased sample variance of prediction</td>
-      <td>Regression only</td>
-      </tr>
+      <td>有偏差的预测样本方差</td>
+      <td>仅限回归</td>
+    </tr>
   </tbody>
 </table>
 
 
-# Tree Ensembles
+# 树集成
 
-The DataFrame API 支持 two major tree ensemble 算法: [Random Forests](http://en.wikipedia.org/wiki/Random_forest) and [Gradient-Boosted Trees (GBTs)](http://en.wikipedia.org/wiki/Gradient_boosting)。
-Both use [`spark.ml` decision trees](ml-classification-regression.md#decision-trees) as their base models。
+`DataFrame`API支持两种主要的树集成算法：[随机森林](http://en.wikipedia.org/wiki/Random_forest)和[梯度提升树](http://en.wikipedia.org/wiki/Gradient_boosting)。
+两者都使用[`spark.ml`决策树](#决策树)作为基础模型。
 
-Users can find more information about ensemble 算法 in the [MLlib Ensemble guide](mllib-ensembles.md)。
-In this section, we demonstrate the DataFrame API for ensembles。
+用户可以在[MLlib集成指南](mllib-ensembles.md)中找到集成算法的更多信息。
+在这一节中，我们演示集成的`DataFrame`API。
 
-The main differences between this API and the [original MLlib ensembles API](mllib-ensembles.md) are:
+这个API与[之前的MLlib集成API](mllib-ensembles.md)之间的主要差别如下:
 
-* support for DataFrames and ML Pipelines
-* separation of 分类vs。regression
-* use of DataFrame metadata to distinguish continuous and categorical features
-* more functionality for random forests: estimates of feature importance, as well as the predicted probability of each class (a.k.a。class conditional probabilities) for分类。
+* 支持`DataFrame`和机器学习管道
+* 区分了分类或回归
+* 使用`DataFrame`元数据来区分连续和类别特征
+* 随机森林功能更多：估计特征重要性，还有对于分类问题，可以返回属于每种类别的概率（类别条件概率）。
 
-## Random Forests
+## 随机森林
 
-[Random forests](http://en.wikipedia.org/wiki/Random_forest)
-are ensembles of [decision trees](ml-classification-regression.md#decision-trees)。
-Random forests combine many decision trees in order to reduce the risk of overfitting。
-The `spark.ml` implementation 支持 random forests for binary and multiclass 分类and for regression,
-using both continuous and categorical features。
+[随机森林](http://en.wikipedia.org/wiki/Random_forest)是[决策树](#决策树)的集成算法。
 
-For more information on the algorithm itself, please see the [`spark.mllib` documentation on random forests](mllib-ensembles.md#random-forests)。
+随机森林包含多个决策树来降低过拟合的风险。随机森林同样具有易解释性、可处理类别特征、易扩展到多分类问题、不需特征缩放等性质。
 
-### Inputs and Outputs
+随机森林分别训练一系列的决策树，所以训练过程是并行的。因算法中加入随机过程，所以每个决策树又有少量区别。通过合并每个树的预测结果来减少预测的方差，提高在测试集上的性能表现。
 
-We list the input and output (prediction) column types here。
-All output columns are optional; to exclude一个output column, set its corresponding Param to一个空字符串。
+随机性体现：
 
-#### Input Columns
+* 每次迭代时，对原始数据进行二次抽样来获得不同的训练数据。
+
+* 对于每个树节点，考虑不同的随机特征子集来进行分裂。
+
+除此之外，决策时的训练过程和单独决策树训练过程相同。
+
+对新实例进行预测时，随机森林需要整合其各个决策树的预测结果。回归和分类问题的整合的方式略有不同。分类问题采取投票制，每个决策树投票给一个类别，获得最多投票的类别为最终结果。回归问题每个树得到的预测结果为实数，最终的预测结果为各个树预测结果的平均值。
+
+`spark.ml`支持二分类、多分类以及回归的随机森林算法，同时适用于连续特征和类别特征。
+
+请参考[`spark.mllib`的随机森林文档](mllib-ensembles.md#random-forests)了解算法的更多信息。
+
+## 输入和输出
+
+我们在这里列出了输入和输出（预测）列的类型。
+所有输出列都是可选的；若需要排除一个列，将它的对应参数设为一个空字符串。
+
+#### 输入列
 
 <table class="table">
   <thead>
@@ -1228,18 +1155,18 @@ All output columns are optional; to exclude一个output column, set its correspo
       <td>labelCol</td>
       <td>Double</td>
       <td>"label"</td>
-      <td>Label to predict</td>
+      <td>预测标签</td>
     </tr>
     <tr>
       <td>featuresCol</td>
       <td>Vector</td>
       <td>"features"</td>
-      <td>Feature vector</td>
+      <td>特征向量</td>
     </tr>
   </tbody>
 </table>
 
-#### Output Columns (Predictions)
+### 输出（预测）列
 
 <table class="table">
   <thead>
@@ -1256,44 +1183,46 @@ All output columns are optional; to exclude一个output column, set its correspo
       <td>predictionCol</td>
       <td>Double</td>
       <td>"prediction"</td>
-      <td>Predicted label</td>
+      <td>预测标签</td>
       <td></td>
     </tr>
     <tr>
       <td>rawPredictionCol</td>
       <td>Vector</td>
       <td>"rawPrediction"</td>
-      <td>Vector of length # classes, with the counts of training instance labels at the tree node which makes the prediction</td>
-      <td>分类only</td>
+      <td>类别数长度的向量，表示在做出预测的树节点上的训练实例计数</td>
+      <td>仅限分类</td>
     </tr>
     <tr>
       <td>probabilityCol</td>
       <td>Vector</td>
       <td>"probability"</td>
-      <td>Vector of length # classes equal to rawPrediction normalized to一个多项distribution</td>
-      <td>分类only</td>
+      <td>类别数长度的向量，等于一个多项分布归一化的`rawPrediction`</td>
+      <td>仅限分类</td>
     </tr>
   </tbody>
 </table>
 
 
+## 梯度提升树
 
-## Gradient-Boosted Trees (GBTs)
+[梯度提升树（GBT）](http://en.wikipedia.org/wiki/Gradient_boosting)是一种决策树的集成算法。它通过反复迭代训练决策树来最小化损失函数。决策树类似，梯度提升树具有可处理类别特征、易扩展到多分类问题、不需特征缩放等性质。`Spark.ml`通过使用现有决策树工具来实现。
 
-[Gradient-Boosted Trees (GBTs)](http://en.wikipedia.org/wiki/Gradient_boosting)
-are ensembles of [decision trees](ml-classification-regression.md#decision-trees)。
-GBTs iteratively 训练decision trees in order to minimize一个loss function。
-The `spark.ml` implementation 支持 GBTs for 二分类and for regression,
-using both continuous and categorical features。
+梯度提升树依次迭代训练一系列的决策树。在一次迭代中，算法使用现有的集成来对每个训练实例的类别进行预测，然后将预测结果与真实的标签值进行比较。通过重新标记，来赋予预测结果不好的实例更高的权重。所以，在下次迭代中，决策树会对先前的错误进行修正。
 
-For more information on the algorithm itself, please see the [`spark.mllib` documentation on GBTs](mllib-ensembles.md#gradient-boosted-trees-gbts)。
+对实例标签进行重新标记的机制由损失函数来指定。每次迭代过程中，梯度迭代树在训练数据上进一步减少损失函数的值。`Spark.ml`为分类问题提供一种损失函数（Log Loss），为回归问题提供两种损失函数（平方误差与绝对误差）。
 
-### Inputs and Outputs
+`Spark.ml`支持二分类的梯度提升树算法，适用于连续特征以及类别特征。
 
-We list the input and output (prediction) column types here。
-All output columns are optional; to exclude一个output column, set its corresponding Param to一个空字符串。
+请参考[`spark.mllib`梯度提升树文档](mllib-ensembles.md#gradient-boosted-trees-gbts)了解算法的更多信息。
 
-#### Input Columns
+
+## 输入和输出
+
+我们在这里列出了输入和输出（预测）列的类型。
+所有输出列都是可选的；若需要排除一个列，将它的对应参数设为一个空字符串。
+
+#### 输入列
 
 <table class="table">
   <thead>
@@ -1309,20 +1238,20 @@ All output columns are optional; to exclude一个output column, set its correspo
       <td>labelCol</td>
       <td>Double</td>
       <td>"label"</td>
-      <td>Label to predict</td>
+      <td>预测标签</td>
     </tr>
     <tr>
       <td>featuresCol</td>
       <td>Vector</td>
       <td>"features"</td>
-      <td>Feature vector</td>
+      <td>特征向量</td>
     </tr>
   </tbody>
 </table>
 
-Note that `GBTClassifier` currently only 支持 binary labels。
+**注意**：`GBTClassifier`目前仅支持二值标签。
 
-#### Output Columns (Predictions)
+### 输出（预测）列
 
 <table class="table">
   <thead>
@@ -1339,10 +1268,10 @@ Note that `GBTClassifier` currently only 支持 binary labels。
       <td>predictionCol</td>
       <td>Double</td>
       <td>"prediction"</td>
-      <td>Predicted label</td>
+      <td>预测标签</td>
       <td></td>
     </tr>
   </tbody>
 </table>
 
-In the future, `GBTClassifier` will也output columns for `rawPrediction` and `probability`, just as `RandomForestClassifier` does。
+将来`GBTClassifier`也会像`RandomForestClassifier`一样输出`rawPrediction`和`probability`列。

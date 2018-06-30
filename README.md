@@ -114,21 +114,33 @@ MLlib是Spark里的机器学习库。它的目标是使实用的机器学习算�
 
     3.1.8 [朴素贝叶斯](ml-classification-regression.md#naive-bayes)
 
-#### 3.2 [回归](ml-classification-regression.md#regression)
+#### 3.2 [回归](ml-classification-regression.md#回归)
 
-    3.2.1 [线性回归](ml-classification-regression.md#linear-regression)
+    3.2.1 [线性回归](ml-classification-regression.md#线性回归)
 
-    3.2.2 [广义线性模型](ml-classification-regression.md#generalized-linear-regression)
+    3.2.2 [广义线性模型](ml-classification-regression.md#广义线性模型)
 
-    3.2.3 [回归树](ml-classification-regression.md#decision-tree-regression)
+    3.2.3 [回归树](ml-classification-regression.md#回归树)
 
-    3.2.4 [随机森林回归](ml-classification-regression.md#random-forest-regression)
+    3.2.4 [随机森林回归](ml-classification-regression.md#随机森林回归)
 
-    3.2.4 [梯度提升树回归](ml-classification-regression.md#gradient-boosted-tree-regression)
+    3.2.4 [梯度提升树回归](ml-classification-regression.md#梯度提升树回归)
 
-    3.2.5 [生存回归](ml-classification-regression.md#survival-regression)
+    3.2.5 [生存回归](ml-classification-regression.md#生存回归)
 
-    3.2.6 [保序回归](ml-classification-regression.md#isotonic-regression)
+    3.2.6 [保序回归](ml-classification-regression.md#保序回归)
+
+#### 3.3 实现细节
+
+    3.3.1 [线性方法](ml-classification-regression.md#线性方法)
+
+    3.3.2 [决策树](ml-classification-regression.md#决策树)
+
+    3.3.3 [树集成](ml-classification-regression.md#树集成)
+
+    3.3.4 [随机森林](ml-classification-regression.md#随机森林)
+
+    3.3.5 [梯度提升树](ml-classification-regression.md#梯度提升树)
 
 ### 4 聚类
 
