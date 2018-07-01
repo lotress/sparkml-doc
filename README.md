@@ -152,7 +152,7 @@ MLlib是Spark里的机器学习库。它的目标是使实用的机器学习算�
 
 #### 4.4 [高斯混合模型（GMM）](ml-clustering.ipynb#高斯混合模型（GMM）)
 
-### 5 协同过滤
+### 5 [协同过滤](ml-collaborative-filtering.ipynb)
 
 ### 6 模型选择和调试
 
